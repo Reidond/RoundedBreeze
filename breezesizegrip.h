@@ -35,66 +35,62 @@
 namespace Breeze
 {
 
-    //* implements size grip for all widgets
-    class SizeGrip: public QWidget
-    {
+//* implements size grip for all widgets
+class SizeGrip : public QWidget
+{
 
-        Q_OBJECT
+  Q_OBJECT
 
-        public:
+public:
+  //* constructor
+  explicit SizeGrip(Decoration *);
 
-        //* constructor
-        explicit SizeGrip( Decoration* );
+  //* constructor
+  virtual ~SizeGrip();
 
-        //* constructor
-        virtual ~SizeGrip();
+protected Q_SLOTS:
 
-        protected Q_SLOTS:
+  //* update background color
+  void updateActiveState();
 
-        //* update background color
-        void updateActiveState();
+  //* update position
+  void updatePosition();
 
-        //* update position
-        void updatePosition();
+  //* embed into parent widget
+  void embed();
 
-        //* embed into parent widget
-        void embed();
+protected:
+  //*@name event handlers
+  //@{
 
-        protected:
+  //* paint
+  virtual void paintEvent(QPaintEvent *) override;
 
-        //*@name event handlers
-        //@{
+  //* mouse press
+  virtual void mousePressEvent(QMouseEvent *) override;
 
-        //* paint
-        virtual void paintEvent( QPaintEvent* ) override;
+  //@}
 
-        //* mouse press
-        virtual void mousePressEvent( QMouseEvent* ) override;
+private:
+  //* send resize event
+  void sendMoveResizeEvent(QPoint);
 
-        //@}
+  //* grip size
+  enum
+  {
+    Offset = 0,
+    GripSize = 14
+  };
 
-        private:
+  //* decoration
+  QPointer<Decoration> m_decoration;
 
-        //* send resize event
-        void sendMoveResizeEvent( QPoint );
+//* move/resize atom
+#if BREEZE_HAVE_X11
+  xcb_atom_t m_moveResizeAtom = 0;
+#endif
+};
 
-        //* grip size
-        enum {
-            Offset = 0,
-            GripSize = 14
-        };
-
-        //* decoration
-        QPointer<Decoration> m_decoration;
-
-        //* move/resize atom
-        #if BREEZE_HAVE_X11
-        xcb_atom_t m_moveResizeAtom = 0;
-        #endif
-
-    };
-
-
-}
+} // namespace Breeze
 
 #endif

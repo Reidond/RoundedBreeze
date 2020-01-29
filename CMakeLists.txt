@@ -1,3 +1,28 @@
+project(breezedecoration)
+set(PROJECT_VERSION "0.1")
+set(PROJECT_VERSION_MAJOR 0)
+
+cmake_minimum_required(VERSION 2.8.12 FATAL_ERROR)
+
+include(WriteBasicConfigVersionFile)
+include(FeatureSummary)
+
+find_package(ECM 0.0.9 REQUIRED NO_MODULE)
+
+set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR} ${CMAKE_SOURCE_DIR}/cmake)
+include(ECMInstallIcons)
+include(KDEInstallDirs)
+include(KDECMakeSettings)
+include(KDECompilerSettings NO_POLICY_SCOPE)
+include(GenerateExportHeader)
+# include(GtkUpdateIconCache)
+
+find_package(KDecoration2 REQUIRED)
+
+#find_package(FFTW REQUIRED)
+
+
+# old stuff
 add_definitions(-DTRANSLATION_DOMAIN="breeze_kwin_deco")
 
 find_package(KF5 REQUIRED COMPONENTS CoreAddons GuiAddons ConfigWidgets WindowSystem I18n)
@@ -34,6 +59,7 @@ include_directories(${CMAKE_BINARY_DIR}/libbreezecommon)
 
 ################# newt target #################
 ### plugin classes
+# set(breezedecoration_SRCS
 set(breezedecoration_SRCS
     breezebutton.cpp
     breezedecoration.cpp
@@ -41,10 +67,12 @@ set(breezedecoration_SRCS
     breezesettingsprovider.cpp
     breezesizegrip.cpp)
 
+# kconfig_add_kcfg_files(breezedecoration_SRCS breezesettings.kcfgc)
 kconfig_add_kcfg_files(breezedecoration_SRCS breezesettings.kcfgc)
 
 ### config classes
 ### they are kept separately because they might move in a separate library in the future
+# set(breezedecoration_config_SRCS
 set(breezedecoration_config_SRCS
     config/breezeconfigwidget.cpp
     config/breezedetectwidget.cpp
@@ -54,6 +82,7 @@ set(breezedecoration_config_SRCS
     config/breezeitemmodel.cpp
 )
 
+# set(breezedecoration_config_PART_FORMS
 set(breezedecoration_config_PART_FORMS
    config/ui/breezeconfigurationui.ui
    config/ui/breezedetectwidget.ui
@@ -61,21 +90,47 @@ set(breezedecoration_config_PART_FORMS
    config/ui/breezeexceptionlistwidget.ui
 )
 
+set(breezecommon_LIB_SRCS
+    breezeboxshadowrenderer.cpp
+    breezeboxshadowhelper.cpp
+)
+
+find_path(FFTW_INCLUDES fftw3.h)
+
+find_library(FFTW_LIBRARIES NAMES fftw3)
+
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(FFTW DEFAULT_MSG
+                                  FFTW_INCLUDES FFTW_LIBRARIES)
+
+mark_as_advanced(FFTW_INCLUDES FFTW_LIBRARIES)
+
+# ki18n_wrap_ui(breezedecoration_config_PART_FORMS_HEADERS ${breezedecoration_config_PART_FORMS})
 ki18n_wrap_ui(breezedecoration_config_PART_FORMS_HEADERS ${breezedecoration_config_PART_FORMS})
 
 ### build library
+# add_library(breezedecoration MODULE
+    # ${breezedecoration_SRCS}
+    # ${breezedecoration_config_SRCS}
+    # ${breezedecoration_config_PART_FORMS_HEADERS})
 add_library(breezedecoration MODULE
     ${breezedecoration_SRCS}
     ${breezedecoration_config_SRCS}
-    ${breezedecoration_config_PART_FORMS_HEADERS})
+    ${breezedecoration_config_PART_FORMS_HEADERS}
+    ${breezecommon_LIB_SRCS})
 
+generate_export_header(breezedecoration
+        BASE_NAME breezecommon
+        EXPORT_FILE_NAME breezecommon_export.h)
+
+# target_link_libraries(breezedecoration
 target_link_libraries(breezedecoration
     PUBLIC
         Qt5::Core
         Qt5::Gui
         Qt5::DBus
     PRIVATE
-        breezecommon5
+        ${FFTW_LIBRARIES}
         KDecoration2::KDecoration
         KF5::ConfigCore
         KF5::CoreAddons
@@ -85,6 +140,7 @@ target_link_libraries(breezedecoration
         KF5::WindowSystem)
 
 if(BREEZE_HAVE_X11)
+  # target_link_libraries(breezedecoration
   target_link_libraries(breezedecoration
     PUBLIC
       Qt5::X11Extras
@@ -94,3 +150,5 @@ endif()
 
 install(TARGETS breezedecoration DESTINATION ${PLUGIN_INSTALL_DIR}/org.kde.kdecoration2)
 install(FILES config/breezedecorationconfig.desktop DESTINATION  ${SERVICES_INSTALL_DIR})
+# install(TARGETS breezedecoration DESTINATION ${PLUGIN_INSTALL_DIR}/org.kde.kdecoration2)
+# install(FILES config/breezedecorationconfig.desktop DESTINATION  ${SERVICES_INSTALL_DIR})

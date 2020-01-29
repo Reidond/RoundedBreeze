@@ -31,46 +31,43 @@
 namespace Breeze
 {
 
-    class SettingsProvider: public QObject
-    {
+class SettingsProvider : public QObject
+{
 
-        Q_OBJECT
+  Q_OBJECT
 
-        public:
+public:
+  //* destructor
+  ~SettingsProvider();
 
-        //* destructor
-        ~SettingsProvider();
+  //* singleton
+  static SettingsProvider *self();
 
-        //* singleton
-        static SettingsProvider *self();
+  //* internal settings for given decoration
+  InternalSettingsPtr internalSettings(Decoration *) const;
 
-        //* internal settings for given decoration
-        InternalSettingsPtr internalSettings(Decoration *) const;
+public Q_SLOTS:
 
-        public Q_SLOTS:
+  //* reconfigure
+  void reconfigure();
 
-        //* reconfigure
-        void reconfigure();
+private:
+  //* contructor
+  SettingsProvider();
 
-        private:
+  //* default configuration
+  InternalSettingsPtr m_defaultSettings;
 
-        //* contructor
-        SettingsProvider();
+  //* exceptions
+  InternalSettingsList m_exceptions;
 
-        //* default configuration
-        InternalSettingsPtr m_defaultSettings;
+  //* config object
+  KSharedConfigPtr m_config;
 
-        //* exceptions
-        InternalSettingsList m_exceptions;
+  //* singleton
+  static SettingsProvider *s_self;
+};
 
-        //* config object
-        KSharedConfigPtr m_config;
-
-        //* singleton
-        static SettingsProvider *s_self;
-
-    };
-
-}
+} // namespace Breeze
 
 #endif

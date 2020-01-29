@@ -28,35 +28,35 @@
 
 namespace Breeze
 {
-    //* convenience typedefs
-    using InternalSettingsPtr = QSharedPointer<InternalSettings>;
-    using InternalSettingsList = QList<InternalSettingsPtr>;
-    using InternalSettingsListIterator = QListIterator<InternalSettingsPtr>;
+//* convenience typedefs
+using InternalSettingsPtr = QSharedPointer<InternalSettings>;
+using InternalSettingsList = QList<InternalSettingsPtr>;
+using InternalSettingsListIterator = QListIterator<InternalSettingsPtr>;
 
-    //* metrics
-    enum Metrics
-    {
+//* metrics
+enum Metrics
+{
 
-        //* corner radius (pixels)
-        Frame_FrameRadius = 7,
+  //* corner radius (pixels)
+  Frame_FrameRadius = 7,
 
-        //* titlebar metrics, in units of small spacing
-        TitleBar_TopMargin = 2,
-        TitleBar_BottomMargin = 2,
-        TitleBar_SideMargin = 2,
-        TitleBar_ButtonSpacing = 2,
+  //* titlebar metrics, in units of small spacing
+  TitleBar_TopMargin = 2,
+  TitleBar_BottomMargin = 2,
+  TitleBar_SideMargin = 2,
+  TitleBar_ButtonSpacing = 2,
 
-        // shadow dimensions (pixels)
-        Shadow_Overlap = 3,
+  // shadow dimensions (pixels)
+  Shadow_Overlap = 3,
 
-    };
+};
 
-    //* exception
-    enum ExceptionMask
-    {
-        None = 0,
-        BorderSize = 1<<4
-    };
-}
+//* exception
+enum ExceptionMask
+{
+  None = 0,
+  BorderSize = 1 << 4
+};
+} // namespace Breeze
 
 #endif

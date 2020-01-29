@@ -31,110 +31,121 @@
 namespace Breeze
 {
 
-    class Button : public KDecoration2::DecorationButton
-    {
-        Q_OBJECT
+class Button : public KDecoration2::DecorationButton
+{
+  Q_OBJECT
 
-        //* declare active state opacity
-        Q_PROPERTY( qreal opacity READ opacity WRITE setOpacity )
+  //* declare active state opacity
+  Q_PROPERTY(qreal opacity READ opacity WRITE setOpacity)
 
-        public:
+public:
+  //* constructor
+  explicit Button(QObject *parent, const QVariantList &args);
 
-        //* constructor
-        explicit Button(QObject *parent, const QVariantList &args);
+  //* destructor
+  virtual ~Button() = default;
 
-        //* destructor
-        virtual ~Button() = default;
+  //* button creation
+  static Button *create(KDecoration2::DecorationButtonType type, KDecoration2::Decoration *decoration, QObject *parent);
 
-        //* button creation
-        static Button *create(KDecoration2::DecorationButtonType type, KDecoration2::Decoration *decoration, QObject *parent);
+  //* render
+  virtual void paint(QPainter *painter, const QRect &repaintRegion) override;
 
-        //* render
-        virtual void paint(QPainter *painter, const QRect &repaintRegion) override;
+  //* flag
+  enum Flag
+  {
+    FlagNone,
+    FlagStandalone,
+    FlagFirstInList,
+    FlagLastInList
+  };
 
-        //* flag
-        enum Flag
-        {
-            FlagNone,
-            FlagStandalone,
-            FlagFirstInList,
-            FlagLastInList
-        };
+  //* flag
+  void setFlag(Flag value)
+  {
+    m_flag = value;
+  }
 
-        //* flag
-        void setFlag( Flag value )
-        { m_flag = value; }
+  //* standalone buttons
+  bool isStandAlone() const { return m_flag == FlagStandalone; }
 
-        //* standalone buttons
-        bool isStandAlone() const { return m_flag == FlagStandalone; }
+  //* offset
+  void setOffset(const QPointF &value)
+  {
+    m_offset = value;
+  }
 
-        //* offset
-        void setOffset( const QPointF& value )
-        { m_offset = value; }
+  //* horizontal offset, for rendering
+  void setHorizontalOffset(qreal value)
+  {
+    m_offset.setX(value);
+  }
 
-        //* horizontal offset, for rendering
-        void setHorizontalOffset( qreal value )
-        { m_offset.setX( value ); }
+  //* vertical offset, for rendering
+  void setVerticalOffset(qreal value)
+  {
+    m_offset.setY(value);
+  }
 
-        //* vertical offset, for rendering
-        void setVerticalOffset( qreal value )
-        { m_offset.setY( value ); }
+  //* set icon size
+  void setIconSize(const QSize &value)
+  {
+    m_iconSize = value;
+  }
 
-        //* set icon size
-        void setIconSize( const QSize& value )
-        { m_iconSize = value; }
+  //*@name active state change animation
+  //@{
+  void setOpacity(qreal value)
+  {
+    if (m_opacity == value)
+      return;
+    m_opacity = value;
+    update();
+  }
 
-        //*@name active state change animation
-        //@{
-        void setOpacity( qreal value )
-        {
-            if( m_opacity == value ) return;
-            m_opacity = value;
-            update();
-        }
+  qreal opacity() const
+  {
+    return m_opacity;
+  }
 
-        qreal opacity() const
-        { return m_opacity; }
+  //@}
 
-        //@}
+private Q_SLOTS:
 
-        private Q_SLOTS:
+  //* apply configuration changes
+  void reconfigure();
 
-        //* apply configuration changes
-        void reconfigure();
+  //* animation state
+  void updateAnimationState(bool);
 
-        //* animation state
-        void updateAnimationState(bool);
+private:
+  //* private constructor
+  explicit Button(KDecoration2::DecorationButtonType type, Decoration *decoration, QObject *parent = nullptr);
 
-        private:
+  //* draw button icon
+  void drawIcon(QPainter *) const;
 
-        //* private constructor
-        explicit Button(KDecoration2::DecorationButtonType type, Decoration *decoration, QObject *parent = nullptr);
+  //*@name colors
+  //@{
+  QColor foregroundColor() const;
+  QColor backgroundColor() const;
+  //@}
 
-        //* draw button icon
-        void drawIcon( QPainter *) const;
+  Flag m_flag = FlagNone;
 
-        //*@name colors
-        //@{
-        QColor foregroundColor() const;
-        QColor backgroundColor() const;
-        //@}
+  //* active state change animation
+  QPropertyAnimation *m_animation;
 
-        Flag m_flag = FlagNone;
+  //* vertical offset (for rendering)
+  QPointF m_offset;
 
-        //* active state change animation
-        QPropertyAnimation *m_animation;
+  //* icon size
+  QSize m_iconSize;
 
-        //* vertical offset (for rendering)
-        QPointF m_offset;
+  //* active state change opacity
+  qreal m_opacity = 0;
+};
 
-        //* icon size
-        QSize m_iconSize;
-
-        //* active state change opacity
-        qreal m_opacity = 0;
-    };
-
-} // namespace
+} // namespace Breeze
 
 #endif
